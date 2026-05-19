@@ -1,19 +1,14 @@
 package com.example.typeform_webhook.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
 import com.example.typeform_webhook.service.WebhookService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/webhooks/typeform")
 @RestController
+@RequestMapping("/webhooks/typeform")
 public class WebhookController {
-      private final WebhookService service;
+
+    private final WebhookService service;
 
     public WebhookController(WebhookService service) {
         this.service = service;

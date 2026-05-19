@@ -1,7 +1,7 @@
 package com.example.typeform_webhook.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -40,23 +40,16 @@ public class WebhookService {
             System.out.println("Event Type: " + eventType);
             System.out.println("Form ID: " + formId);
             System.out.println("Submitted At: " + submittedAt);
-            System.out.println("Answers:");
-            System.out.println(answers.toPrettyString());
+            System.out.println("Answers: " + answers.toPrettyString());
 
         } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid Typeform payload"
-            );
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Typeform payload");
         }
     }
 
     private void validateSignature(String signatureHeader, String rawBody) {
         if (signatureHeader == null || signatureHeader.isBlank()) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Missing Typeform-Signature header"
-            );
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing Typeform-Signature header");
         }
 
         try {
@@ -80,19 +73,13 @@ public class WebhookService {
             );
 
             if (!valid) {
-                throw new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED,
-                        "Invalid Typeform signature"
-                );
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Typeform signature");
             }
 
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error validating Typeform signature"
-            );
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error validating Typeform signature");
         }
     }
 }
