@@ -3,16 +3,18 @@ package com.example.typeform_webhook.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
-public class TypeformClient {
+public class TypeformFormsClient {
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
 
-    public TypeformClient(
+    public TypeformFormsClient(
             @Value("${typeform.api.token}") String token
     ) {
 
@@ -20,19 +22,30 @@ public class TypeformClient {
 
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.typeform.com")
-                .defaultHeader("Authorization", "Bearer " + token)
+                .defaultHeader(
+                        HttpHeaders.AUTHORIZATION,
+                        "Bearer " + token
+                )
+                .defaultHeader(
+                        HttpHeaders.CONTENT_TYPE,
+                        MediaType.APPLICATION_JSON_VALUE
+                )
                 .build();
     }
 
-    public JsonNode getForms(Integer page, Integer size, String search) {
+    public JsonNode getForms(
+            int page,
+            int size,
+            String search
+    ) {
 
         try {
 
             String response = webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/forms")
-                            .queryParam("page", page != null ? page : 0)
-                            .queryParam("page_size", size != null ? size : 20)
+                            .queryParam("page", page)
+                            .queryParam("page_size", size)
                             .queryParamIfPresent(
                                     "search",
                                     java.util.Optional.ofNullable(search)
@@ -45,7 +58,10 @@ public class TypeformClient {
             return objectMapper.readTree(response);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error fetching forms from Typeform", e);
+            throw new RuntimeException(
+                    "Error fetching forms",
+                    e
+            );
         }
     }
 
@@ -62,7 +78,10 @@ public class TypeformClient {
             return objectMapper.readTree(response);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error fetching form details", e);
+            throw new RuntimeException(
+                    "Error fetching form",
+                    e
+            );
         }
     }
 }
